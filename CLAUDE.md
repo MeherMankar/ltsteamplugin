@@ -56,3 +56,5 @@ Any new RPC method added to `public/luatools.js` (called via `Millennium.callSer
 Miss one and the method silently no-ops or errors under exactly one of the two install modes — see the
 LuaTools GUI CLAUDE.md for how easy this failure mode is to miss (fails-open presence checks, swallowed
 exceptions, etc.).
+
+-

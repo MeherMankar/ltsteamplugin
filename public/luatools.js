@@ -168,15 +168,6 @@
     return score > 0;
   }
 
-  // B button handler removed - users should use the modal buttons directly
-  // This prevents conflicts with Steam's back navigation
-  let onBackHandler = function () {
-    console.log(
-      "[Gamepad] B button pressed - ignoring (use modal buttons instead)",
-    );
-    // Do nothing - let users navigate with D-pad/stick and press A on Cancel/Back buttons
-  };
-
   function onGamepadConnected(event) {
     console.log("[Gamepad] Gamepad conectado en Millennium:", event.gamepad.id);
     state.gamepadConnected = true;
@@ -547,18 +538,6 @@
 
   window.GamepadNav = {
     scanElements: scanFocusableElements,
-    setBackHandler: function (fn) {
-      if (typeof fn === "function") {
-        onBackHandler = fn;
-      }
-    },
-    focusElement: focusElement,
-    getCurrentIndex: function () {
-      return state.currentFocusIndex;
-    },
-    getElements: function () {
-      return state.focusableElements;
-    },
     isConnected: function () {
       return state.gamepadConnected;
     },

@@ -101,10 +101,6 @@
   const OVERLAY_SELECTORS = [
     ".luatools-overlay",
     ".luatools-settings-overlay",
-    ".luatools-fixes-results-overlay",
-    ".luatools-loading-fixes-overlay",
-    ".luatools-unfix-overlay",
-    ".luatools-settings-manager-overlay",
     ".luatools-alert-overlay",
     ".luatools-confirm-overlay",
     ".luatools-loadedapps-overlay",
@@ -1310,10 +1306,6 @@
             /* Force overlay backdrops to follow the active theme (overrides inline styles) */
             .luatools-settings-overlay,
             .luatools-overlay,
-            .luatools-fixes-results-overlay,
-            .luatools-loading-fixes-overlay,
-            .luatools-unfix-overlay,
-            .luatools-settings-manager-overlay,
             .luatools-loadedapps-overlay {
                 background: rgba(${theme.rgbString}, 0.12) !important;
                 backdrop-filter: blur(8px) !important;
@@ -1321,9 +1313,7 @@
 
             /* Prefer overlay-scoped select rules to override theme CSS files */
             .luatools-settings-overlay select,
-            .luatools-settings-manager-overlay select,
             .luatools-overlay select,
-            .luatools-fixes-results-overlay select,
             .luatools-loadedapps-overlay select {
                 background-color: ${theme.bgTertiary} !important;
                 color: ${theme.text} !important;
@@ -1333,32 +1323,24 @@
                 font-size: 14px !important;
             }
             .luatools-settings-overlay select option,
-            .luatools-settings-manager-overlay select option,
             .luatools-overlay select option,
-            .luatools-fixes-results-overlay select option,
             .luatools-loadedapps-overlay select option {
                 background-color: ${theme.bgPrimary} !important;
                 color: ${theme.text} !important;
             }
             .luatools-settings-overlay select option:checked,
-            .luatools-settings-manager-overlay select option:checked,
             .luatools-overlay select option:checked,
-            .luatools-fixes-results-overlay select option:checked,
             .luatools-loadedapps-overlay select option:checked {
                 background: ${theme.accent} !important;
                 color: ${theme.text} !important;
             }
             .luatools-settings-overlay select:hover,
-            .luatools-settings-manager-overlay select:hover,
             .luatools-overlay select:hover,
-            .luatools-fixes-results-overlay select:hover,
             .luatools-loadedapps-overlay select:hover {
                 border-color: ${theme.borderHover} !important;
             }
             .luatools-settings-overlay select:focus,
-            .luatools-settings-manager-overlay select:focus,
             .luatools-overlay select:focus,
-            .luatools-fixes-results-overlay select:focus,
             .luatools-loadedapps-overlay select:focus {
                 outline: none !important;
                 border-color: ${theme.accent} !important;

@@ -3151,19 +3151,6 @@
                     pillsContainer.appendChild(pill);
                   }
 
-                  // reset button state
-                  const btn =
-                    steamdbContainer.querySelector(".luatools-button");
-                  if (btn) {
-                    btn.style.opacity = "";
-                    btn.style.pointerEvents = "";
-                    btn.style.cursor = "";
-                    const span = btn.querySelector("span");
-                    if (span && span.textContent === "Unplayable") {
-                      span.textContent = lt("Add via LuaTools");
-                    }
-                  }
-
                   if (showDenuvoPill) {
                     const pill = document.createElement("span");
                     pill.className = "luatools-pill orange";

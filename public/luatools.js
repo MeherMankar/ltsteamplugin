@@ -1109,60 +1109,6 @@
       });
   }
 
-  // Cache for game names fetched from Steam API
-  const steamGameNameCache = {};
-  // Track in-flight promises so we don't fire duplicate requests for the same appid
-  const steamGameNameInFlight = {};
-  // Throttle: max 2 concurrent fetch calls to avoid overwhelming Millennium's network interceptor
-  let _steamFetchActive = 0;
-  const _steamFetchQueue = [];
-  const _STEAM_FETCH_CONCURRENCY = 2;
-
-  function _runSteamFetchQueue() {
-    if (_steamFetchActive >= _STEAM_FETCH_CONCURRENCY || _steamFetchQueue.length === 0) return;
-    const { appid, resolve, reject } = _steamFetchQueue.shift();
-    _steamFetchActive++;
-    fetch(
-      "https://store.steampowered.com/api/appdetails?appids=" + appid + "&filters=basic"
-    )
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        let name = null;
-        if (data && data[appid] && data[appid].success && data[appid].data && data[appid].data.name) {
-          name = data[appid].data.name;
-          steamGameNameCache[appid] = name;
-        }
-        resolve(name);
-      })
-      .catch(function(err) {
-        resolve(null);
-      })
-      .finally(function() {
-        _steamFetchActive--;
-        delete steamGameNameInFlight[appid];
-        _runSteamFetchQueue();
-      });
-  }
-
-  /**
-   * get game name separately without cached full appid
-   * @param {number|string} appid
-   * @returns {Promise<string|null>}
-   */
-  function fetchSteamGameName(appid) {
-    if (!appid) return Promise.resolve(null);
-    if (steamGameNameCache[appid]) return Promise.resolve(steamGameNameCache[appid]);
-    // Deduplicate: return the same promise if already in-flight
-    if (steamGameNameInFlight[appid]) return steamGameNameInFlight[appid];
-
-    const promise = new Promise(function(resolve, reject) {
-      _steamFetchQueue.push({ appid: appid, resolve: resolve, reject: reject });
-      _runSteamFetchQueue();
-    });
-    steamGameNameInFlight[appid] = promise;
-    return promise;
-  }
-
   const TRANSLATION_PLACEHOLDER = "translation missing";
 
   function applyTranslationBundle(bundle) {

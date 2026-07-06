@@ -444,19 +444,6 @@
     state.animationFrameId = requestAnimationFrame(pollGamepad);
   }
 
-  // Disabled: MutationObserver was causing unwanted auto-scanning
-  // Only manual scanElements() calls from overlay setTimeout will trigger scans
-  /*
-    const observer = new MutationObserver(function(mutations) {
-        clearTimeout(observer.rescanTimeout);
-        observer.rescanTimeout = setTimeout(function() {
-            if (state.gamepadConnected) {
-                scanFocusableElements();
-            }
-        }, 300);
-    });
-    */
-
   // Block Steam's gamepad navigation when overlay is active
   function blockSteamNavigation(event) {
     const hasActiveOverlay = document.querySelector(OVERLAY_SELECTOR_STRING);
@@ -551,16 +538,7 @@
       }
     }
 
-    // Disabled: MutationObserver auto-scanning
-    /*
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-        */
-
     // Don't scan on init - only scan when overlays are opened
-    // scanFocusableElements();
 
     console.log("[Gamepad] Initialization complete");
   }

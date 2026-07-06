@@ -2377,7 +2377,7 @@
     }
   }
 
-  // Steam-style confirm helper (ShowConfirmDialog only)
+  // Custom modal confirm dialog, styled to match Steam
   function showLuaToolsConfirm(title, message, onConfirm, onCancel) {
     // Always close settings popup first so the confirm is visible on top
     closeSettingsOverlay();

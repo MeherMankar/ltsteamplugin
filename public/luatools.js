@@ -2940,14 +2940,21 @@
             typeof Millennium !== "undefined" &&
             typeof Millennium.callServerMethod === "function"
           ) {
-            // prevent multiple concurrent checks
+            // Prevent multiple concurrent checks — but self-heal if a check got stuck.
+            // If HasLuaToolsForApp never settles (a slow/hung backend round-trip has been
+            // observed to leave the promise pending), the in-flight flag would otherwise
+            // stay true forever and every retry/observer call would early-return here, so
+            // the button could never be inserted. Allow a fresh attempt once the stuck
+            // check is older than 8s.
             if (
               window.__LuaToolsPresenceCheckInFlight &&
-              window.__LuaToolsPresenceCheckAppId === appid
+              window.__LuaToolsPresenceCheckAppId === appid &&
+              Date.now() - (window.__LuaToolsPresenceCheckAt || 0) < 8000
             ) {
               return;
             }
             window.__LuaToolsPresenceCheckInFlight = true;
+            window.__LuaToolsPresenceCheckAt = Date.now();
             window.__LuaToolsPresenceCheckAppId = appid;
             window.__LuaToolsCurrentAppId = appid;
             window.Millennium.callServerMethod("luatools", "HasLuaToolsForApp", { appid })

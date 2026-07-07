@@ -597,30 +597,20 @@
   // LuaTools GUI backend shim
   // ------------------------------------------------------------
   // The old Lua/Millennium backend is gone. The LuaTools GUI desktop app is now
-  // the real backend, reached over HTTP on 127.0.0.1:20761. We declare a LOCAL
-  // `Millennium` here that shadows the shared global only inside this IIFE — so
-  // other Millennium plugins keep their real callServerMethod untouched — and map
-  // each legacy RPC name to a fetch(). Every call site consumes the result as
+  // the real backend, reached over HTTP on 127.0.0.1:6767. The page can't fetch()
+  // that directly (mixed content), so every RPC routes through the CDP bridge
+  // (window.Millennium, defined by the CEF injector's polyfill), which makes the
+  // real HTTP call from the app process. We declare a LOCAL `Millennium` here that
+  // shadows the shared global only inside this IIFE — so other Millennium plugins
+  // keep their real callServerMethod untouched — and map each legacy RPC name to a
+  // bridge call. Every call site consumes the result as
   // `typeof res === "string" ? JSON.parse(res) : res`, so returning a plain object
   // (not a JSON string) is safe. See plan: the app owns everything backend-related;
   // the plugin only reflects state and triggers app actions.
   // ============================================================
   const Millennium = (function () {
-    const BASE = "http://127.0.0.1:20761";
     const aid = (a) =>
       a && typeof a === "object" ? (a.appid ?? a.appId ?? a.id) : a;
-    const getJson = (u) =>
-      fetch(BASE + u)
-        .then((r) => r.json())
-        .catch(() => ({ success: false }));
-    const postJson = (u, body) =>
-      fetch(BASE + u, {
-        method: "POST",
-        headers: body ? { "Content-Type": "application/json" } : undefined,
-        body: body ? JSON.stringify(body) : undefined,
-      })
-        .then((r) => r.json())
-        .catch(() => ({ success: false }));
 
     // Raw fetch() to 127.0.0.1 from this HTTPS page is blocked as mixed content.
     // Route through the CDP bridge (window.Millennium, defined by the CEF injector's
@@ -636,8 +626,8 @@
       DeleteLuaToolsForApp: (a) => call("DeleteLuaToolsForApp", { appid: aid(a) }),
       CancelAddViaLuaTools: (a) => call("CancelAddViaLuaTools", { appid: aid(a) }),
       RestartSteam: () => call("RestartSteam", {}),
-      OpenExternalUrl: (a) => postJson("/open-url", { url: a && a.url }),
-      CheckForUpdatesNow: () => postJson("/check-updates"),
+      OpenExternalUrl: (a) => call("OpenExternalUrl", { url: a && a.url }),
+      CheckForUpdatesNow: () => call("CheckForUpdatesNow", {}),
       ReadLoadedApps: () => call("ReadLoadedApps", {}),
       DismissLoadedApps: () => call("DismissLoadedApps", {}),
       // GetSettingsConfig is a DATA fetch the frontend runs on load — it must NOT

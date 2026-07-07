@@ -3255,14 +3255,11 @@
       }
     },
     false,
-  ); // Changed from true to false (bubble phase instead of capture phase)
+  );
 
-  // Poll backend for progress and update progress bar and text
-  // BUG FIX: `lastUrl` was referenced but never declared — every call threw
-  // "ReferenceError: lastUrl is not defined" immediately, meaning this whole
-  // SPA-navigation-detection mechanism (setInterval + popstate + pushState/replaceState
-  // hooks below) has never actually worked. Init to the current URL so the very first
-  // check correctly sees "no change yet" instead of force-resetting button state.
+  // SPA navigation detection: the store is single-page-ish, so watch for URL changes
+  // (interval + popstate + pushState/replaceState hooks below) to re-add our buttons. Init
+  // lastUrl to the current URL so the first check sees "no change" instead of resetting state.
   let lastUrl = window.location.href;
   function checkUrlChange() {
     const currentUrl = window.location.href;
@@ -3300,8 +3297,7 @@
     setTimeout(checkUrlChange, 100);
   };
 
-  // Pre-fetch settings quietly to ensure background values (like fastDownload) are populated immediately,
-  // and apply themes immediately once settings load.
+  // Load themes + translations early so the UI is styled and localized from the first paint.
   function bootSettings() {
     if (typeof Millennium === "undefined" || typeof Millennium.callServerMethod !== "function") {
         setTimeout(bootSettings, 200);

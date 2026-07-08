@@ -742,6 +742,20 @@
     }
   }
 
+  // Read the game name straight off the store page so the backend can skip a lua.tools /details
+  // lookup. Best-effort: an empty return just makes the backend fetch it as before.
+  function getPageGameName() {
+    try {
+      var el = document.querySelector(".apphub_AppName, #appHubAppName");
+      var n = el && el.textContent ? el.textContent.trim() : "";
+      if (n) return n;
+      // Store app-page <title> is "<Name> on Steam".
+      return (document.title || "").replace(/\s+on Steam\s*$/i, "").trim();
+    } catch (e) {
+      return "";
+    }
+  }
+
   // Store-page button is an Add <-> Remove toggle. Mode is tracked on the element
   // via data-lt-mode so the delegated click handler knows which action to run.
   function startLuaToolsAdd(appid, anchor) {
@@ -752,9 +766,10 @@
     // Raw fetch() to 127.0.0.1 is blocked as mixed content on this HTTPS store page;
     // route through the CDP bridge (window.Millennium -> CefInjectorService -> HttpClient)
     // instead, which makes the actual HTTP call from the app process, not the browser.
-    window.Millennium.callServerMethod("luatools", "StartLuaToolsAdd", { appid }).catch(
-      function () {},
-    );
+    window.Millennium.callServerMethod("luatools", "StartLuaToolsAdd", {
+      appid,
+      name: getPageGameName(),
+    }).catch(function () {});
 
     let finished = false;
     let picking = false;
@@ -964,7 +979,7 @@
           }
         })
         .catch(function () {});
-    }, 800);
+    }, 350);
   }
 
   backendLog("LuaTools script loaded");

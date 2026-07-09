@@ -881,6 +881,8 @@
       });
     };
 
+    // This setInterval only self-clears on SUCCESS. A cancelled or errored add would otherwise leak it
+    // forever, and the leaked timers flood the CDP RPC bridge until a later picker hangs on "Checking
     const timer = setInterval(function () {
       if (finished) {
         clearInterval(timer);
@@ -2190,6 +2192,8 @@
     }, 150);
 
     function cleanup() {
+      // cancel/close can reach it. Skipping this leaks the timer and floods the CDP bridge (picker hangs).
+      if (runState.pollTimer) { clearInterval(runState.pollTimer); runState.pollTimer = null; }
       overlay.remove();
     }
 

@@ -1,21 +1,25 @@
-local m_logger = require("logger")
+-- Safe logger: tries Millennium's built-in logger, falls back to print()
+local ok, m_logger = pcall(require, "logger")
 
-local logger = {}
+local M = {}
 
-function logger.log(msg)
-    m_logger:info(tostring(msg))
+function M.log(msg)
+    if ok then pcall(function() m_logger:info(tostring(msg)) end)
+    else print("[LuaTools] " .. tostring(msg)) end
 end
 
-function logger.warn(msg)
-    m_logger:warn(tostring(msg))
+function M.warn(msg)
+    if ok then pcall(function() m_logger:warn(tostring(msg)) end)
+    else print("[LuaTools WARN] " .. tostring(msg)) end
 end
 
-function logger.error(msg)
-    m_logger:error(tostring(msg))
+function M.error(msg)
+    if ok then pcall(function() m_logger:error(tostring(msg)) end)
+    else print("[LuaTools ERROR] " .. tostring(msg)) end
 end
 
-function logger.info(msg)
-    m_logger:info(tostring(msg))
+function M.info(msg)
+    M.log(msg)
 end
 
-return logger
+return M

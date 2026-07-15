@@ -23,7 +23,7 @@ local logger      = require("plugin_logger")
 local paths       = require("paths")
 local steam_utils = require("steam_utils")
 local http        = require("http")
-local cjson       = require("json")
+local cjson       = require("cjson")
 
 -- ── App backend bridge (127.0.0.1:6767) ────────────────────────────────────────
 
